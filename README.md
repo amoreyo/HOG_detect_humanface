@@ -38,17 +38,17 @@
 
 ## 碰到的error
 1. RuntimeWarning: overflow encountered in ubyte_scalars像素加减运算溢出异常             
-  用python处理图像时，可能会涉及两幅图像像素值之间的加减运算，这里需要注意的是图像像素值是ubyte类型，ubyte类型数据范围为0~255，若做运算出现负值或超出255，则会抛出异常
+    用python处理图像时，可能会涉及两幅图像像素值之间的加减运算，这里需要注意的是图像像素值是ubyte类型，ubyte类型数据范围为0~255，若做运算出现负值或超出255，则会抛出异常
 
 
 2. **前景提要**：
-  我在写fliter，先写了mean的fliter，最后写出来，发现展示的图片好黑好黑，这显然是因为像素值太小所导致的，然后我去仔细看程序，奇妙的事情发生了  
-  61 61 61 61 61 61 61 61 61  
-  37
-  37是61×9的和？？？想到像素的最高点是255，所以61×9-256-256 = 37  
-  真相浮出睡眠
-  结果：只要是 img[i, j, chan] 相加，程序会自动把超过255的减去256使之小于255，原因不详。  
-  **解决方法**：就傻乎乎给每个像素值先除后加咯
+    我在写fliter，先写了mean的fliter，最后写出来，发现展示的图片好黑好黑，这显然是因为像素值太小所导致的，然后我去仔细看程序，奇妙的事情发生了  
+    61 61 61 61 61 61 61 61 61  
+    37
+    37是61×9的和？？？想到像素的最高点是255，所以61×9-256-256 = 37  
+    真相浮出睡眠
+    结果：只要是 img[i, j, chan] 相加，程序会自动把超过255的减去256使之小于255，原因不详。  
+    **解决方法**：就傻乎乎给每个像素值先除后加咯
 
 
 3. requests.exceptions.TooManyRedirects: Exceeded 30 redirects.
@@ -57,11 +57,9 @@
 
     好像这样的图片还不止一张，那有相同的报错就直接跳过吧
    
-
 4. cv2.error: OpenCV(4.5.4-dev) D:\a\opencv-python\opencv-python\opencv\modules\imgproc\src\resize.cpp:4051: error: (-215:Assertion failed) !ssize.empty() in function 'cv::resize'
-应该是数据的问题，存在错误数据  
+   应该是数据的问题，存在错误数据  
    **解决方案**: 跳过出错的图片并且把名字给保存一下
-   
    
 5. OSError: image file is truncated (1 bytes not processed)  
     这个问题其实超级常见啦，网上的很多教程只告诉你需要怎么做，但没有告诉你为何这么做。  
@@ -73,10 +71,10 @@
     from PIL import ImageFile  
     ImageFile.LOAD_TRUNCATED_IMAGES = True  
     把LOAD_TRUNCATED_IMAGES设为true，实际上会导致你加载的图片少掉一部分，虽然在大数据中，偶尔一两张被裁掉没什么大问题，但是还是应当注意，不要暴力用才好。
-   
- 
+
+
 6. IndexError: list index out of range  
-具体情景：  
+   具体情景：  
    for i in range(len(list)):
         if():
             list.remove(list[i])  
@@ -104,3 +102,7 @@ var太主观了，应该要自适应
 现在先debug找出为什么都去了右下角  
 再实现其他anchor的分布来优化  
 1. 把所有anchors 类似k-mean分块， 分出的大块就是下一次的grid
+
+### 12.14
+
+在看卡方分布的时候，突然想到，数据的var分布有很多0，很不对劲啊，var是取平方了的值的和。猜想原因是特征向量的每个值都太小了，或者特征向量太大了。TODO： 先调试第二个方法
